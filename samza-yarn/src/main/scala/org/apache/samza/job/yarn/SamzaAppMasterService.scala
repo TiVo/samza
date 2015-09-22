@@ -47,6 +47,7 @@ class SamzaAppMasterService(config: Config, state: SamzaAppMasterState, registry
 
     webApp = new HttpServer(resourceBasePath = "scalate")
     webApp.addServlet("/*", new ApplicationMasterWebServlet(config, state))
+    webApp.addServlet("/ws/v1/samza/*", new ApplicationMasterRestServlet(config, state, registry))
     webApp.start
 
     state.jobCoordinator.start
