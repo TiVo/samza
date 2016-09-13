@@ -60,22 +60,22 @@ subprojects {
   nexus {
     attachSources = true
     attachTests = false
-    attachJavadoc = true
-    sign = true
-    repositoryUrl = 'https://repository.apache.org/service/local/staging/deploy/maven2'
-    snapshotRepositoryUrl = 'https://repository.apache.org/content/repositories/snapshots'
+    attachJavadoc = false
+    sign = false
+    repositoryUrl = this.properties['mavenUrl']
+    snapshotRepositoryUrl = this.properties['mavenSnapshotUrl']
   }
 
   modifyPom {
     project {
-      name 'Apache Samza'
+      name 'Apache Samza + Digitalsmiths patches'
       description 'A distributed stream processing framework built upon Apache Kafka and Apache Hadoop YARN.'
       url 'http://samza.apache.org/'
 
       scm {
-        url 'https://git-wip-us.apache.org/repos/asf?p=samza.git;a=tree'
-        connection 'scm:http://git-wip-us.apache.org/repos/asf/samza.git'
-        developerConnection 'scm:https://git-wip-us.apache.org/repos/asf/samza.git'
+        url 'https://github.com/TiVo/samza.git'
+        connection 'scm:https://github.com/TiVo/samza.git'
+        developerConnection 'scm:https://github.com/TiVo/samza.git'
       }
 
       licenses {
