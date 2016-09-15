@@ -38,6 +38,7 @@ class KeyValueStorageEngine[K, V](
   batchSize: Int = 500) extends StorageEngine with KeyValueStore[K, V] with Logging {
 
   var count = 0
+  var closed = false
 
   /* delegate to underlying store */
   def get(key: K): V = {
@@ -117,24 +118,26 @@ class KeyValueStorageEngine[K, V](
   }
 
   def flush() = {
-    trace("Flushing.")
-
-    metrics.flushes.inc
-
-    wrapperStore.flush()
+    if (!closed) {
+      trace("Flushing.")
+      metrics.flushes.inc
+      wrapperStore.flush()
+    }
   }
 
   def stop() = {
-    trace("Stopping.")
+      trace("Stopping.")
 
-    close()
+      close()
   }
 
   def close() = {
-    trace("Closing.")
-
-    flush()
-    wrapperStore.close()
+    if (!closed) {
+      trace("Closing.")
+      closed = true
+      flush()
+      wrapperStore.close()
+    }
   }
 
   override def getStoreProperties: StoreProperties = storeProperties
