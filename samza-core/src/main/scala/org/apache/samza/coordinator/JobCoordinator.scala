@@ -137,7 +137,7 @@ object JobModelManager extends Logging {
 
     // Get the set of partitions for each SystemStream from the stream metadata
     streamMetadataCache
-      .getStreamMetadata(inputSystemStreams, true)
+      .getStreamMetadata(inputSystemStreams)
       .flatMap {
         case (systemStream, metadata) =>
           metadata
