@@ -1150,9 +1150,17 @@
 
                 <tr>
                     <td class="property" id="store-changelog-replication-factor">stores.<span class="store">store-name</span>.changelog.<br>replication.factor</td>
-                    <td class="default">2</td>
+                    <td class="default">stores.changelog.replication.factor.default</td>
                     <td class="description">
                         The property defines the number of replicas to use for the change log stream.
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="property" id="store-changelog-replication-factor-default">stores.changelog.replication.factor.default</td>
+                    <td class="default">2</td>
+                    <td class="description">
+                        This property defines the default number of replicas to use for the change log stream.
                     </td>
                 </tr>
 

@@ -45,6 +45,7 @@ object KafkaConfig {
   val CHECKPOINT_SEGMENT_BYTES = "task.checkpoint.segment.bytes"
 
   val CHANGELOG_STREAM_REPLICATION_FACTOR = "stores.%s.changelog.replication.factor"
+  val CHANGELOG_STREAM_REPLICATION_FACTOR_DEFAULT = "stores.changelog.replication.factor.default"
   val CHANGELOG_STREAM_KAFKA_SETTINGS = "stores.%s.changelog.kafka."
   // The default segment size to use for changelog topics
   val CHANGELOG_DEFAULT_SEGMENT_SIZE = "536870912"
@@ -115,7 +116,8 @@ class KafkaConfig(config: Config) extends ScalaMapConfig(config) {
   def getRegexResolvedStreams(rewriterName: String) = getOption(KafkaConfig.REGEX_RESOLVED_STREAMS format rewriterName)
   def getRegexResolvedSystem(rewriterName: String) = getOption(KafkaConfig.REGEX_RESOLVED_SYSTEM format rewriterName)
   def getRegexResolvedInheritedConfig(rewriterName: String) = config.subset((KafkaConfig.REGEX_INHERITED_CONFIG format rewriterName) + ".", true)
-  def getChangelogStreamReplicationFactor(name: String) = getOption(KafkaConfig.CHANGELOG_STREAM_REPLICATION_FACTOR format name)
+  def getChangelogStreamReplicationFactor(name: String) = getOption(KafkaConfig.CHANGELOG_STREAM_REPLICATION_FACTOR format name).getOrElse(getChangelogStreamReplicationFactorDefault)
+  def getChangelogStreamReplicationFactorDefault = getOption(KafkaConfig.CHANGELOG_STREAM_REPLICATION_FACTOR_DEFAULT).getOrElse("2")
 
   // The method returns a map of storenames to changelog topic names, which are configured to use kafka as the changelog stream
   def getKafkaChangelogEnabledStores() = {
