@@ -245,6 +245,7 @@ class OffsetManager(
 
       // invoke checkpoint listeners
       //partitionOffsets.groupBy(_._1.getSystem).foreach {
+      partitionOffsets.foreach(p => info("task " + taskName + " checkpoint " + p._1 + ", " + p._2))
       partitionOffsets.groupBy { case (ssp, _) => ssp.getSystem }.foreach {
         case (systemName:String, offsets: Map[SystemStreamPartition, String]) => {
           // Option is empty if there is no checkpointListener for this systemName
