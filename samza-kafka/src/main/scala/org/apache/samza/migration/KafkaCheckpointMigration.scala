@@ -93,11 +93,11 @@ class KafkaCheckpointMigration extends MigrationPlan with Logging {
     val coordinatorSystemFactory = new CoordinatorStreamSystemFactory
     val coordinatorSystemConsumer = coordinatorSystemFactory.getCoordinatorStreamSystemConsumer(config, new MetricsRegistryMap)
     val coordinatorSystemProducer = coordinatorSystemFactory.getCoordinatorStreamSystemProducer(config, new MetricsRegistryMap)
-    coordinatorSystemProducer.register(source)
 
     val checkpointManager = new KafkaCheckpointManagerFactory().getCheckpointManager(config, new NoOpMetricsRegistry).asInstanceOf[KafkaCheckpointManager]
 
     val kafkaUtil = new KafkaUtil(new ExponentialSleepStrategy, getConnectZk(config))
+
     // make sure to validate that we only perform migration when checkpoint topic exists
     if (kafkaUtil.topicExists(checkpointTopicName)) {
       kafkaUtil.validateTopicPartitionCount(
@@ -140,6 +140,7 @@ class KafkaCheckpointMigration extends MigrationPlan with Logging {
   def migrationCompletionMark(coordinatorSystemProducer: CoordinatorStreamSystemProducer) = {
     info("Marking completion of migration %s" format migrationKey)
     val message = new SetMigrationMetaMessage(source, migrationKey, migrationVal)
+    coordinatorSystemProducer.register(source)
     coordinatorSystemProducer.start()
     coordinatorSystemProducer.send(message)
     coordinatorSystemProducer.stop()
