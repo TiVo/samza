@@ -20,7 +20,7 @@
 package org.apache.samza.migration
 
 import kafka.utils.ZKStringSerializer
-import kafka.utils.ZkUtils
+import org.I0Itec.zkclient.ZkClient
 import org.apache.samza.SamzaException
 import org.apache.samza.checkpoint.kafka.{KafkaCheckpointManager, KafkaCheckpointManagerFactory}
 import org.apache.samza.config.Config
@@ -40,7 +40,7 @@ class KafkaCheckpointMigration extends MigrationPlan with Logging {
   val migrationKey = "CheckpointMigration09to10"
   val migrationVal = "true"
 
-  var connectZk: () => ZkUtils = null
+  var connectZk: () => ZkClient = null
 
   private def getCheckpointSystemName(config: Config): String = {
     config
@@ -68,7 +68,7 @@ class KafkaCheckpointMigration extends MigrationPlan with Logging {
     new ClientUtilTopicMetadataStore(producerConfig.bootsrapServers, clientId, consumerConfig.socketTimeoutMs)
   }
 
-  private def getConnectZk(config: Config): () => ZkUtils = {
+  private def getConnectZk(config: Config): () => ZkClient = {
     val clientId = getClientId(config)
 
     val checkpointSystemName = getCheckpointSystemName(config)
@@ -80,7 +80,7 @@ class KafkaCheckpointMigration extends MigrationPlan with Logging {
     val zkConnectString = Option(consumerConfig.zkConnect)
       .getOrElse(throw new SamzaException("no zookeeper.connect defined in config"))
     () => {
-      ZkUtils(zkConnectString, 6000, 6000, false)
+      new ZkClient(zkConnectString, 6000, 6000, ZKStringSerializer)
     }
   }
 
