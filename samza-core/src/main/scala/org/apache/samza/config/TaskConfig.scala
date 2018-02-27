@@ -40,6 +40,7 @@ object TaskConfig {
   val GROUPER_FACTORY = "task.name.grouper.factory" // class name for task grouper
   val MAX_CONCURRENCY = "task.max.concurrency" // max number of concurrent process for a AsyncStreamTask
   val CALLBACK_TIMEOUT_MS = "task.callback.timeout.ms"  // timeout period for triggering a callback
+  val MAX_NO_WORK_WAIT_MS = "task.max.no.work.wait.ms"  // maximum time to wait for a task worker to complete when there are no new messages to handle
 
   /**
    * Samza's container polls for more messages under two conditions. The first
@@ -125,6 +126,11 @@ class TaskConfig(config: Config) extends ScalaMapConfig(config) with Logging {
   }
 
   def getCallbackTimeoutMs: Option[Long] = getOption(TaskConfig.CALLBACK_TIMEOUT_MS) match {
+    case Some(ms) => Some(ms.toLong)
+    case _ => None
+  }
+
+  def getMaxNoWorkWaitMs: Option[Long] = getOption(TaskConfig.MAX_NO_WORK_WAIT_MS) match {
     case Some(ms) => Some(ms.toLong)
     case _ => None
   }

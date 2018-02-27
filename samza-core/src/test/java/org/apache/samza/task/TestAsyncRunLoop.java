@@ -69,6 +69,7 @@ public class TestAsyncRunLoop {
   long commitMs;
   long callbackTimeoutMs;
   long maxThrottlingDelayMs;
+  long maxNoWorkWaitMs;
   int maxMessagesInFlight;
   TaskCoordinator.RequestScope commitRequest;
   TaskCoordinator.RequestScope shutdownRequest;
@@ -99,6 +100,7 @@ public class TestAsyncRunLoop {
         commitMs,
         callbackTimeoutMs,
         maxThrottlingDelayMs,
+        maxNoWorkWaitMs,
         containerMetrics,
         () -> 0L);
   }
@@ -503,6 +505,7 @@ public class TestAsyncRunLoop {
         commitMs,
         callbackTimeoutMs,
         maxThrottlingDelayMs,
+        maxNoWorkWaitMs,
         containerMetrics,
         () -> 0L);
 

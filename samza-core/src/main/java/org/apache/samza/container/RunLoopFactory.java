@@ -44,6 +44,7 @@ public class RunLoopFactory {
   private static final long DEFAULT_WINDOW_MS = -1L;
   private static final long DEFAULT_COMMIT_MS = 60000L;
   private static final long DEFAULT_CALLBACK_TIMEOUT_MS = -1L;
+  private static final long DEFAULT_MAX_NO_WORK_WAIT_MS = 10L;
 
   public static Runnable createRunLoop(scala.collection.immutable.Map<TaskName, TaskInstance> taskInstances,
       SystemConsumers consumerMultiplexer,
@@ -93,6 +94,10 @@ public class RunLoopFactory {
 
       log.info("Got callback timeout: " + callbackTimeout);
 
+      Long maxNoWorkWaitMs = config.getMaxNoWorkWaitMs().getOrElse(defaultValue(DEFAULT_MAX_NO_WORK_WAIT_MS));
+
+      log.info("Got maxNoWorkWaitMs: " + maxNoWorkWaitMs);
+
       log.info("Run loop in asynchronous mode.");
 
       return new AsyncRunLoop(
@@ -104,6 +109,7 @@ public class RunLoopFactory {
         taskCommitMs,
         callbackTimeout,
         maxThrottlingDelayMs,
+        maxNoWorkWaitMs,
         containerMetrics,
         clock);
     }
