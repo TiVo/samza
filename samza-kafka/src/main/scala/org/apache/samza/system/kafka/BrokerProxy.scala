@@ -24,14 +24,16 @@ package org.apache.samza.system.kafka
 import java.nio.channels.ClosedByInterruptException
 import java.util.Map.Entry
 import java.util.concurrent.{ConcurrentHashMap, CountDownLatch}
+
 import kafka.api._
-import kafka.common.{NotLeaderForPartitionException, UnknownTopicOrPartitionException, ErrorMapping, TopicAndPartition}
+import kafka.common.{ErrorMapping, NotLeaderForPartitionException, TopicAndPartition, UnknownTopicOrPartitionException}
 import kafka.consumer.ConsumerConfig
-import kafka.message.MessageSet
+import kafka.message.{ByteBufferMessageSet, MessageSet}
 import org.apache.samza.SamzaException
 import org.apache.samza.util.ExponentialSleepStrategy
 import org.apache.samza.util.Logging
 import org.apache.samza.util.ThreadNamePrefix.SAMZA_THREAD_NAME_PREFIX
+
 import scala.collection.JavaConversions._
 import scala.collection.concurrent
 import scala.collection.mutable
@@ -277,6 +279,11 @@ class BrokerProxy(
       metrics.offsets(tp).set(nextOffset)
     }
 
+    val bbMessageSet = messageSet.asInstanceOf[ByteBufferMessageSet]
+    if (bbMessageSet.validBytes <= 0 && bbMessageSet.sizeInBytes > 0 && data.hw != 0 && data.hw != nextOffset) {
+      warn("Skipping offset " + nextOffset + " because no records were returned when fetching")
+      nextOffset += 1
+    }
     nextOffsets.replace(tp, nextOffset) // use replace rather than put in case this tp was removed while we were fetching.
 
     // Update high water mark
