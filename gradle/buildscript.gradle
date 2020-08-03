@@ -20,7 +20,7 @@ repositories {
   repositories {
     // For gradle-nexus-plugin
     maven {
-      url 'http://jcenter.bintray.com/'
+      url 'https://jcenter.bintray.com/'
     }
   }
 }
